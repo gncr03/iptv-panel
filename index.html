@@ -64,8 +64,24 @@ button{width:100%;margin-top:18px;padding:13px;background:#f5c518;border:none;bo
 
 <script>
 let SERVER="", USER="", PASS="", aktifSekme='canli', veriler=[];
-function proxy(url){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(url); }
 function yaz(m){ document.getElementById('durum').innerText = m; }
+
+async function proxyFetch(url){
+  let proxyler = [
+    "https://corsproxy.io/?url=" + encodeURIComponent(url),
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url)
+  ];
+  let sonHata = null;
+  for(let i=0; i<proxyler.length; i++){
+    try{
+      yaz('Deneniyor... ' + (i+1) + '/3');
+      let r = await fetch(proxyler[i]);
+      if(r.ok) return r;
+    }catch(e){ sonHata = e; }
+  }
+  throw sonHata || new Error('Failed to fetch');
+}
 
 document.getElementById('girisBtn').addEventListener('click', async function(){
   yaz('Basıldı! Bağlanılıyor, bekle...');
@@ -75,8 +91,7 @@ document.getElementById('girisBtn').addEventListener('click', async function(){
   if(!PASS){ yaz('Şifreni yazmadın!'); return; }
   try{
     let apiUrl = SERVER + "/player_api.php?username=" + USER + "&password=" + PASS + "&action=get_live_streams";
-    yaz('Sunucuya gidiliyor...');
-    let r = await fetch(proxy(apiUrl));
+    let r = await proxyFetch(apiUrl);
     yaz('Cevap geldi, okunuyor...');
     let txt = await r.text();
     try{ veriler = JSON.parse(txt); } catch(e){ yaz('Sunucu garip cevap verdi: ' + txt.slice(0,80)); return; }
@@ -107,7 +122,7 @@ async function listele(){
   if(aktifSekme==='film') url=SERVER+"/player_api.php?username="+USER+"&password="+PASS+"&action=get_vod_streams";
   if(aktifSekme==='dizi') url=SERVER+"/player_api.php?username="+USER+"&password="+PASS+"&action=get_series";
   try{
-    let r=await fetch(proxy(url)); let d=await r.json(); veriler=d;
+    let r=await proxyFetch(url); let d=await r.json(); veriler=d;
   }catch(e){}
   let filtreli=veriler.filter(x=>(x.name||'').toLowerCase().includes(q)).slice(0,60);
   document.getElementById('liste').innerHTML=filtreli.map((x)=>{
@@ -119,9 +134,9 @@ async function listele(){
 function oynat(id,isim){
   let video=document.getElementById('video');
   let link='';
-  if(aktifSekme==='canli') link=proxy(SERVER+"/live/"+USER+"/"+PASS+"/"+id+".m3u8");
-  if(aktifSekme==='film') link=proxy(SERVER+"/movie/"+USER+"/"+PASS+"/"+id+".mp4");
-  if(aktifSekme==='dizi') link=proxy(SERVER+"/series/"+USER+"/"+PASS+"/"+id+".mp4");
+  if(aktifSekme==='canli') link="https://corsproxy.io/?url=" + encodeURIComponent(SERVER+"/live/"+USER+"/"+PASS+"/"+id+".m3u8");
+  if(aktifSekme==='film') link="https://corsproxy.io/?url=" + encodeURIComponent(SERVER+"/movie/"+USER+"/"+PASS+"/"+id+".mp4");
+  if(aktifSekme==='dizi') link="https://corsproxy.io/?url=" + encodeURIComponent(SERVER+"/series/"+USER+"/"+PASS+"/"+id+".mp4");
   document.getElementById('oynatici').style.display='block';
   document.getElementById('kanalAdi').innerText='Şimdi oynatılıyor: '+isim;
   window.scrollTo({top:0,behavior:'smooth'});
