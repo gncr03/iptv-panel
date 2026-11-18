@@ -2,147 +2,617 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Benim TV</title>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>BENİM TV PRO</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.18"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
-body{background:#0a0a0f;color:#fff;min-height:100vh}
-.ust{background:#15151f;padding:14px 14px 10px;position:sticky;top:0;z-index:10;border-bottom:1px solid #2a2a3a}
-.logo{font-weight:bold;font-size:19px} .logo span{color:#f5c518}
-.ara{width:100%;margin-top:12px;padding:11px 12px;background:#0f0f16;border:1px solid #2a2a3a;border-radius:10px;color:#fff;outline:none}
-.sekmeler{display:flex;gap:8px;margin-top:12px}
-.sekme{flex:1;padding:10px;border-radius:10px;border:1px solid #2a2a3a;background:#0f0f16;color:#aaa;text-align:center;font-size:13px;font-weight:bold;cursor:pointer}
-.sekme.aktif{background:#f5c518;color:#000;border-color:#f5c518}
-#oynatici{display:none;background:#000;padding:10px}
-video{width:100%;border-radius:12px;background:#000;max-height:280px}
-#kanalAdi{font-size:14px;margin-top:8px;font-weight:bold}
-.liste{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kart{background:#15151f;border:1px solid #2a2a3a;border-radius:14px;padding:12px;cursor:pointer}
-.kart img{width:100%;height:70px;object-fit:contain;background:#0f0f16;border-radius:10px}
-.kart b{font-size:12px;display:block;margin-top:8px;line-height:1.3;min-height:30px}
-.kart small{color:#f5c518;font-size:11px}
-.giris{max-width:380px;margin:30px auto;padding:24px;background:#15151f;border:1px solid #2a2a3a;border-radius:20px}
-.giris h1{text-align:center;font-size:22px} .giris p{text-align:center;color:#999;font-size:13px;margin:6px 0 18px}
-label{font-size:12px;color:#aaa;display:block;margin:12px 0 6px}
-input{width:100%;padding:12px;background:#0f0f16;border:1px solid #2a2a3a;border-radius:10px;color:#fff}
-button{width:100%;margin-top:18px;padding:13px;background:#f5c518;border:none;border-radius:10px;font-weight:bold;font-size:15px}
-#durum{text-align:center;font-size:13px;color:#fff;margin-top:12px;min-height:20px;background:#222;padding:8px;border-radius:8px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#101010;color:#fff;min-height:100vh}
+:root{--gold:#f5c518;--panel:#151923;--border:#293043}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.login{max-width:420px;margin:45px auto;padding:25px;background:var(--panel);border:1px solid var(--border);border-radius:20px}
+.login h1{text-align:center;font-size:27px;margin-bottom:8px}
+.login h1 span{color:var(--gold)}
+.login p{text-align:center;color:#9299a9;font-size:13px;margin-bottom:22px}
+label{display:block;font-size:12px;color:#aaa;margin:13px 0 6px}
+input,select{width:100%;padding:13px;background:#0b0e16;color:white;border:1px solid var(--border);border-radius:10px;outline:none}
+input:focus,select:focus{border-color:var(--gold)}
+.btn{border:0;border-radius:10px;background:var(--gold);color:#111;font-weight:bold;padding:13px;width:100%;margin-top:15px}
+.btn:disabled{opacity:.5}
+.remember{display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;margin-top:15px}
+.remember input{width:17px;height:17px}
+.status{background:#0b0e16;border-radius:9px;padding:11px;text-align:center;font-size:12px;color:#ddd;margin-top:14px;min-height:38px;overflow-wrap:anywhere}
+.header{background:#131722;padding:14px;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--border)}
+.brand{font-size:21px;font-weight:bold}
+.brand span{color:var(--gold)}
+.headerline{display:flex;align-items:center;justify-content:space-between}
+.headerline small{color:#8d96a8;font-size:10px}
+.search{margin-top:12px}
+.tabs{display:flex;gap:7px;margin-top:12px}
+.tab{flex:1;padding:11px 4px;border-radius:9px;background:#202635;color:#aaa;border:1px solid var(--border);font-size:11px;font-weight:bold}
+.tab.active{background:var(--gold);color:#111;border-color:var(--gold)}
+.toolbar{display:flex;gap:8px;padding:10px 12px;flex-wrap:wrap}
+.toolbar select{flex:1;min-width:130px;padding:10px;font-size:12px}
+.smallbtn{background:#202635;border:1px solid var(--border);color:white;border-radius:9px;padding:10px;font-size:11px}
+.smallbtn.active{color:var(--gold);border-color:var(--gold)}
+#playerBox{display:none;background:#111620;padding:12px;border-bottom:1px solid var(--border)}
+video{width:100%;max-height:300px;background:#000;border-radius:12px}
+.now{font-weight:bold;font-size:14px;margin:10px 0}
+.playerbuttons{display:flex;gap:7px;flex-wrap:wrap}
+.playerbuttons button{flex:1;min-width:65px;padding:10px;background:#252d3c;color:white;border:0;border-radius:8px;font-size:11px}
+.playerbuttons button:active{background:var(--gold);color:#000}
+#playerStatus{font-size:11px;color:#aaa;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:10px;min-width:0;position:relative;cursor:pointer}
+.card:active{border-color:var(--gold)}
+.poster{width:100%;height:90px;background:#0b0e16;border-radius:8px;object-fit:contain;color:#aaa}
+.card b{display:block;font-size:12px;line-height:1.4;margin-top:8px;min-height:30px;overflow-wrap:anywhere}
+.card small{color:var(--gold);font-size:10px}
+.fav{position:absolute;right:15px;top:15px;border:0;background:#171b25;color:var(--gold);border-radius:50%;width:27px;height:27px}
+.empty{grid-column:1/-1;text-align:center;padding:35px 10px;color:#9299a9;font-size:13px}
+.sectiontitle{padding:14px 13px 0;font-size:13px;color:var(--gold)}
+#app{display:none}
+#episodeBox{display:none;padding:12px;background:#111620}
+#episodeBox h3{font-size:14px;margin-bottom:10px}
+.episode{padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;font-size:12px;cursor:pointer}
+.footer{text-align:center;color:#646d7e;padding:25px;font-size:10px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.login{margin-top:65px}}
 </style>
 </head>
 <body>
 
-<div id="loginSayfa" class="giris">
-  <h1>📺 Benim TV</h1>
-  <p>Yasal aboneliğin ile giriş yap</p>
-  <label>Sunucu URL</label>
-  <input id="server" value="http://2233030.cc:8080">
-  <label>Kullanıcı Adı</label>
-  <input id="user" value="ahmetgncr">
-  <label>Şifre</label>
-  <input id="pass" type="password" placeholder="Şifreni yaz">
-  <button id="girisBtn">GİRİŞ YAP</button>
-  <div id="durum">Butona basmayı bekliyorum...</div>
+<div id="loginPage" class="login">
+ <h1>📺 BENİM <span>TV PRO</span></h1>
+ <p>Akıllı medya ve yayın merkezi</p>
+
+ <label>Sunucu URL</label>
+ <input id="server" placeholder="http://sunucu-adresi:8080">
+
+ <label>Kullanıcı adı</label>
+ <input id="username" placeholder="Kullanıcı adınız">
+
+ <label>Şifre</label>
+ <input id="password" type="password" placeholder="Şifreniz">
+
+ <div class="remember">
+  <input type="checkbox" id="remember">
+  <span>Giriş bilgilerimi bu cihazda hatırla</span>
+ </div>
+
+ <button class="btn" id="loginBtn">GİRİŞ YAP</button>
+ <div class="status" id="loginStatus">Bağlantı bekleniyor...</div>
 </div>
 
-<div id="panel" style="display:none">
-  <div class="ust">
-    <div class="logo">📺 BENİM <span>TV</span></div>
-    <input class="ara" id="arama" placeholder="Kanal / film ara...">
-    <div class="sekmeler">
-      <div class="sekme aktif" id="sekme-canli">CANLI TV</div>
-      <div class="sekme" id="sekme-film">FİLM</div>
-      <div class="sekme" id="sekme-dizi">DİZİ</div>
-    </div>
+<div id="app">
+ <div class="header">
+  <div class="headerline">
+   <div class="brand">📺 BENİM <span>TV PRO</span></div>
+   <small id="connection">● HAZIR</small>
   </div>
-  <div id="oynatici">
-    <video id="video" controls playsinline></video>
-    <div id="kanalAdi"></div>
+
+  <input id="search" class="search" placeholder="🔍 Kanal, film veya dizi ara...">
+
+  <div class="tabs">
+   <button class="tab active" data-tab="live">CANLI TV</button>
+   <button class="tab" data-tab="movie">FİLM</button>
+   <button class="tab" data-tab="series">DİZİ</button>
+   <button class="tab" data-tab="favorite">FAVORİ</button>
   </div>
-  <div class="liste" id="liste"></div>
+ </div>
+
+ <div id="playerBox">
+  <video id="video" controls playsinline webkit-playsinline></video>
+  <div class="now" id="nowPlaying">Yayın seçilmedi</div>
+  <div class="playerbuttons">
+   <button id="previous">◀ ÖNCEKİ</button>
+   <button id="playPause">▶ OYNAT</button>
+   <button id="next">SONRAKİ ▶</button>
+   <button id="fullscreen">⛶ TAM EKRAN</button>
+   <button id="stop">■ DURDUR</button>
+  </div>
+  <div id="playerStatus">Yayın bekleniyor...</div>
+ </div>
+
+ <div id="episodeBox">
+  <h3 id="seriesTitle">Dizi bölümleri</h3>
+  <div id="episodes"></div>
+ </div>
+
+ <div class="toolbar">
+  <select id="category">
+   <option value="">Tüm kategoriler</option>
+  </select>
+  <button class="smallbtn" id="recentBtn">SON İZLENEN</button>
+  <button class="smallbtn" id="refreshBtn">↻ YENİLE</button>
+ </div>
+
+ <div class="sectiontitle" id="listTitle">CANLI YAYINLAR</div>
+ <div class="grid" id="list"></div>
+ <div class="footer">BENİM TV PRO • Kişisel medya oynatıcısı</div>
 </div>
 
 <script>
-let SERVER="", USER="", PASS="", aktifSekme='canli', veriler=[];
-function yaz(m){ document.getElementById('durum').innerText = m; }
+"use strict";
 
-async function proxyFetch(url){
-  let proxyler = [
-    "https://corsproxy.io/?url=" + encodeURIComponent(url),
-    "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
-    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url)
-  ];
-  let sonHata = null;
-  for(let i=0; i<proxyler.length; i++){
-    try{
-      yaz('Deneniyor... ' + (i+1) + '/3');
-      let r = await fetch(proxyler[i]);
-      if(r.ok) return r;
-    }catch(e){ sonHata = e; }
-  }
-  throw sonHata || new Error('Failed to fetch');
+let SERVER="",USER="",PASS="";
+let activeTab="live";
+let data=[];
+let visibleData=[];
+let currentIndex=-1;
+let hls=null;
+let recent=[];
+let favorites=[];
+let showingRecent=false;
+let seriesData=[];
+
+const $=id=>document.getElementById(id);
+
+function status(msg){
+ $("loginStatus").textContent=msg;
+}
+function playerStatus(msg){
+ $("playerStatus").textContent=msg;
+}
+function cleanServer(value){
+ return value.trim()
+ .replace(/\/+$/,"")
+ .replace(/\/player_api\.php$/i,"");
+}
+function apiURL(params={}){
+ let url=SERVER+"/player_api.php";
+ let p=new URLSearchParams({
+  username:USER,
+  password:PASS,
+  ...params
+ });
+ return url+"?"+p.toString();
+}
+async function getJSON(url){
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),20000);
+ try{
+  const response=await fetch(url,{
+   method:"GET",
+   cache:"no-store",
+   signal:controller.signal,
+   mode:"cors"
+  });
+  if(!response.ok)throw new Error("HTTP "+response.status);
+  const text=await response.text();
+  try{return JSON.parse(text)}
+  catch(e){throw new Error("Sunucu geçerli JSON yanıtı vermedi")}
+ }finally{
+  clearTimeout(timeout);
+ }
+}
+function validArray(d){
+ return Array.isArray(d);
+}
+function saveLocal(){
+ try{
+  localStorage.setItem("benimtv_favorites",JSON.stringify(favorites));
+  localStorage.setItem("benimtv_recent",JSON.stringify(recent));
+ }catch(e){}
+}
+function loadLocal(){
+ try{
+  favorites=JSON.parse(localStorage.getItem("benimtv_favorites")||"[]");
+  recent=JSON.parse(localStorage.getItem("benimtv_recent")||"[]");
+ }catch(e){
+  favorites=[];
+  recent=[];
+ }
 }
 
-document.getElementById('girisBtn').addEventListener('click', async function(){
-  yaz('Basıldı! Bağlanılıyor, bekle...');
-  SERVER=document.getElementById('server').value.trim().replace(/\/$/,'');
-  USER=document.getElementById('user').value.trim();
-  PASS=document.getElementById('pass').value.trim();
-  if(!PASS){ yaz('Şifreni yazmadın!'); return; }
-  try{
-    let apiUrl = SERVER + "/player_api.php?username=" + USER + "&password=" + PASS + "&action=get_live_streams";
-    let r = await proxyFetch(apiUrl);
-    yaz('Cevap geldi, okunuyor...');
-    let txt = await r.text();
-    try{ veriler = JSON.parse(txt); } catch(e){ yaz('Sunucu garip cevap verdi: ' + txt.slice(0,80)); return; }
-    if(!Array.isArray(veriler)){ yaz('Giriş başarısız, şifreyi kontrol et'); return; }
-    document.getElementById('loginSayfa').style.display='none';
-    document.getElementById('panel').style.display='block';
-    listele();
-  }catch(e){
-    yaz('Hata: ' + e.message);
+$("loginBtn").addEventListener("click",login);
+
+async function login(){
+ SERVER=cleanServer($("server").value);
+ USER=$("username").value.trim();
+ PASS=$("password").value;
+
+ if(!SERVER||!USER||!PASS){
+  status("Lütfen sunucu, kullanıcı adı ve şifreyi gir.");
+  return;
+}
+ if(!/^https?:\/\//i.test(SERVER)){
+  status("Sunucu adresi http:// veya https:// ile başlamalı.");
+  return;
+ }
+
+ $("loginBtn").disabled=true;
+ status("Sunucuya bağlanılıyor...");
+
+ try{
+  const result=await getJSON(apiURL());
+
+  if(!result||!result.user_info){
+   throw new Error("Sunucu giriş bilgilerini doğrulayamadı.");
   }
+
+  const info=result.user_info;
+  if(String(info.auth)==="0"){
+   throw new Error("Kullanıcı adı veya şifre hatalı.");
+  }
+  if(info.status && !["Active","Enabled","1"].includes(String(info.status))){
+   throw new Error("Abonelik durumu aktif değil: "+info.status);
+  }
+
+  if($("remember").checked){
+   localStorage.setItem("benimtv_server",SERVER);
+   localStorage.setItem("benimtv_user",USER);
+   localStorage.setItem("benimtv_pass",PASS);
+  }else{
+   localStorage.removeItem("benimtv_server");
+   localStorage.removeItem("benimtv_user");
+   localStorage.removeItem("benimtv_pass");
+  }
+
+  loadLocal();
+  $("loginPage").style.display="none";
+  $("app").style.display="block";
+  $("connection").textContent="● BAĞLANDI";
+  $("connection").style.color="#50dc91";
+
+  await changeTab("live");
+
+ }catch(e){
+  let msg=e.name==="AbortError"
+   ?"Sunucu zaman aşımına uğradı."
+   :e.message;
+
+  if(e instanceof TypeError){
+   msg="Bağlantı veya CORS engeli. Sunucu tarayıcı erişimine izin vermiyor.";
+  }
+  status("GİRİŞ HATASI: "+msg);
+ }finally{
+  $("loginBtn").disabled=false;
+ }
+}
+
+function stopPlayer(){
+ if(hls){
+  hls.destroy();
+  hls=null;
+ }
+ const v=$("video");
+ v.pause();
+ v.removeAttribute("src");
+ v.load();
+}
+
+async function changeTab(tab){
+ activeTab=tab;
+ showingRecent=false;
+ $("episodeBox").style.display="none";
+ document.querySelectorAll(".tab").forEach(b=>{
+  b.classList.toggle("active",b.dataset.tab===tab);
+ });
+ $("category").innerHTML='<option value="">Tüm kategoriler</option>';
+
+ if(tab==="favorite"){
+  data=[];
+  visibleData=favorites.map(f=>f.item);
+  $("listTitle").textContent="FAVORİLERİM";
+  render();
+  return;
+ }
+
+ const actions={
+  live:["get_live_categories","get_live_streams","CANLI YAYINLAR"],
+  movie:["get_vod_categories","get_vod_streams","FİLMLER"],
+  series:["get_series_categories","get_series","DİZİLER"]
+ };
+ const [catAction,dataAction,title]=actions[tab];
+
+ $("listTitle").textContent=title;
+ $("list").innerHTML='<div class="empty">İçerikler yükleniyor...</div>';
+
+ try{
+  const [cats,items]=await Promise.all([
+   getJSON(apiURL({action:catAction})),
+   getJSON(apiURL({action:dataAction}))
+  ]);
+
+  if(!validArray(items))throw new Error("İçerik listesi alınamadı.");
+
+  data=items;
+  if(validArray(cats)){
+   cats.forEach(c=>{
+    const opt=document.createElement("option");
+    opt.value=String(c.category_id);
+    opt.textContent=c.category_name||"Kategori";
+    $("category").appendChild(opt);
+   });
+  }
+  $("connection").textContent="● BAĞLANDI";
+  render();
+
+ }catch(e){
+  $("list").innerHTML='<div class="empty">İçerik yüklenemedi: '+escapeHTML(e.message)+'</div>';
+ }
+}
+
+function escapeHTML(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function itemId(x){
+ return String(x.stream_id??x.series_id??x.id??"");
+}
+function itemKey(x){
+ return activeTab+":"+itemId(x);
+}
+function isFav(x){
+ return favorites.some(f=>f.key===itemKey(x));
+}
+function toggleFav(x){
+ const key=itemKey(x);
+ const index=favorites.findIndex(f=>f.key===key);
+ if(index>=0)favorites.splice(index,1);
+ else favorites.push({key,item:x,tab:activeTab});
+ saveLocal();
+ render();
+}
+
+function render(){
+ let q=$("search").value.toLocaleLowerCase("tr");
+ let cat=$("category").value;
+
+ let items=showingRecent
+  ?recent.map(r=>r.item)
+  :(activeTab==="favorite"
+    ?favorites.map(f=>f.item)
+    :data);
+
+ visibleData=items.filter(x=>{
+  let name=(x.name||"").toLocaleLowerCase("tr");
+  let matches=name.includes(q);
+  let category=!cat||String(x.category_id)===cat;
+  return matches&&(showingRecent||activeTab==="favorite"||category);
+ });
+
+ const list=$("list");
+ list.innerHTML="";
+
+ if(!visibleData.length){
+  list.innerHTML='<div class="empty">Gösterilecek içerik bulunamadı.</div>';
+  return;
+ }
+
+ visibleData.slice(0,500).forEach((x,index)=>{
+  const card=document.createElement("div");
+  card.className="card";
+
+  const img=document.createElement("img");
+  img.className="poster";
+  img.loading="lazy";
+  img.alt="";
+  img.src=x.stream_icon||x.cover||x.movie_image||"";
+  img.onerror=()=>{img.style.visibility="hidden"};
+
+  const fav=document.createElement("button");
+  fav.className="fav";
+  fav.textContent=isFav(x)?"★":"☆";
+  fav.onclick=e=>{
+   e.stopPropagation();
+   toggleFav(x);
+  };
+
+  const name=document.createElement("b");
+  name.textContent=x.name||"İsimsiz içerik";
+
+  const small=document.createElement("small");
+  small.textContent=activeTab==="live"?"● CANLI YAYIN":
+   activeTab==="movie"?"▶ FİLM":
+   activeTab==="series"?"▶ DİZİ":"▶ İÇERİK";
+
+  card.append(img,fav,name,small);
+  card.onclick=()=>{
+   if(activeTab==="series")openSeries(x);
+   else playItem(x,index);
+  };
+  list.appendChild(card);
+ });
+}
+
+async function playItem(x,index){
+ currentIndex=index;
+ const id=itemId(x);
+ if(!id)return;
+
+ let link="";
+ if(activeTab==="live"){
+  link=SERVER+"/live/"+encodeURIComponent(USER)+"/"+
+   encodeURIComponent(PASS)+"/"+encodeURIComponent(id)+".m3u8";
+ }else if(activeTab==="movie"){
+  let ext=String(x.container_extension||"mp4").replace(/[^a-z0-9]/gi,"");
+  link=SERVER+"/movie/"+encodeURIComponent(USER)+"/"+
+   encodeURIComponent(PASS)+"/"+encodeURIComponent(id)+"."+ext;
+ }
+
+ await playURL(link,x.name||"İçerik");
+
+ if(activeTab!=="favorite"){
+  recent=recent.filter(r=>r.key!==activeTab+":"+id);
+  recent.unshift({
+   key:activeTab+":"+id,
+   item:x,
+   tab:activeTab
+  });
+  recent=recent.slice(0,30);
+  saveLocal();
+ }
+}
+
+async function playURL(link,name){
+ stopPlayer();
+ $("playerBox").style.display="block";
+ $("nowPlaying").textContent="Şimdi oynatılıyor: "+name;
+ playerStatus("Yayın bağlantısı hazırlanıyor...");
+ window.scrollTo({top:0,behavior:"smooth"});
+
+ const video=$("video");
+ video.onerror=()=>{
+  playerStatus("Yayın açılamadı. Sunucu veya format desteklenmiyor.");
+ };
+
+ if(window.Hls&&Hls.isSupported()){
+  hls=new Hls({
+   enableWorker:true,
+   maxBufferLength:30,
+   manifestLoadingTimeOut:20000
+  });
+  hls.loadSource(link);
+  hls.attachMedia(video);
+
+  hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+   video.play().then(()=>{
+    playerStatus("Yayın oynatılıyor.");
+   }).catch(()=>{
+    playerStatus("Oynatmak için video üzerindeki ▶ tuşuna bas.");
+   });
+  });
+
+  hls.on(Hls.Events.ERROR,(event,info)=>{
+   if(!info.fatal)return;
+   if(info.type===Hls.ErrorTypes.NETWORK_ERROR){
+    playerStatus("Yayın bağlantısı başarısız. CORS veya ağ hatası.");
+    hls.startLoad();
+   }else if(info.type===Hls.ErrorTypes.MEDIA_ERROR){
+    playerStatus("Medya hatası. Kurtarılmaya çalışılıyor.");
+    hls.recoverMediaError();
+   }else{
+    playerStatus("Yayın oynatılamıyor.");
+    stopPlayer();
+   }
+  });
+ }else if(video.canPlayType("application/vnd.apple.mpegurl")){
+  video.src=link;
+  video.play().catch(()=>{});
+ }else{
+  video.src=link;
+  video.play().catch(()=>{});
+ }
+}
+
+async function openSeries(series){
+ $("episodeBox").style.display="block";
+ $("seriesTitle").textContent=series.name||"Dizi bölümleri";
+ $("episodes").innerHTML="Bölümler yükleniyor...";
+
+ try{
+  const result=await getJSON(apiURL({
+   action:"get_series_info",
+   series_id:itemId(series)
+  }));
+
+  let seasons=result.episodes||{};
+  seriesData=[];
+
+  Object.keys(seasons).sort((a,b)=>Number(a)-Number(b)).forEach(season=>{
+   (seasons[season]||[]).forEach(ep=>{
+    seriesData.push(ep);
+   });
+  });
+
+  $("episodes").innerHTML="";
+  if(!seriesData.length){
+   $("episodes").textContent="Bu dizi için bölüm bulunamadı.";
+   return;
+  }
+
+  seriesData.forEach((ep,index)=>{
+   const div=document.createElement("div");
+   div.className="episode";
+   div.textContent="▶ "+(ep.episode_num||index+1)+
+    " - "+(ep.title||ep.info?.name||"Bölüm");
+   div.onclick=()=>{
+    playEpisode(ep);
+   };
+   $("episodes").appendChild(div);
+  });
+
+  $("episodeBox").scrollIntoView({behavior:"smooth"});
+
+ }catch(e){
+  $("episodes").textContent="Bölümler alınamadı: "+e.message;
+ }
+}
+
+function playEpisode(ep){
+ const id=ep.id||ep.stream_id;
+ if(!id)return;
+
+ const ext=String(ep.container_extension||"mp4").replace(/[^a-z0-9]/gi,"");
+ const link=SERVER+"/series/"+encodeURIComponent(USER)+"/"+
+  encodeURIComponent(PASS)+"/"+encodeURIComponent(id)+"."+ext;
+
+ playURL(link,ep.title||"Dizi bölümü");
+}
+
+$("search").addEventListener("input",render);
+$("category").addEventListener("change",render);
+
+document.querySelectorAll(".tab").forEach(b=>{
+ b.addEventListener("click",()=>changeTab(b.dataset.tab));
 });
 
-document.getElementById('arama').addEventListener('input', listele);
-document.getElementById('sekme-canli').addEventListener('click', ()=>sekmeDegistir('canli'));
-document.getElementById('sekme-film').addEventListener('click', ()=>sekmeDegistir('film'));
-document.getElementById('sekme-dizi').addEventListener('click', ()=>sekmeDegistir('dizi'));
+$("refreshBtn").onclick=()=>changeTab(activeTab);
 
-function sekmeDegistir(t){
-  aktifSekme=t;
-  document.querySelectorAll('.sekme').forEach(e=>e.classList.remove('aktif'));
-  document.getElementById('sekme-'+t).classList.add('aktif');
-  listele();
-}
-async function listele(){
-  let q=document.getElementById('arama').value.toLowerCase();
-  let url='';
-  if(aktifSekme==='canli') url=SERVER+"/player_api.php?username="+USER+"&password="+PASS+"&action=get_live_streams";
-  if(aktifSekme==='film') url=SERVER+"/player_api.php?username="+USER+"&password="+PASS+"&action=get_vod_streams";
-  if(aktifSekme==='dizi') url=SERVER+"/player_api.php?username="+USER+"&password="+PASS+"&action=get_series";
-  try{
-    let r=await proxyFetch(url); let d=await r.json(); veriler=d;
-  }catch(e){}
-  let filtreli=veriler.filter(x=>(x.name||'').toLowerCase().includes(q)).slice(0,60);
-  document.getElementById('liste').innerHTML=filtreli.map((x)=>{
-    let isim=(x.name||'İsimsiz').replace(/'/g,'');
-    let resim=x.stream_icon||x.cover||'';
-    return '<div class="kart" onclick="oynat('+x.stream_id+',\''+isim+'\')"><img src="'+resim+'" onerror="this.style.display=\'none\'"><b>'+isim+'</b><small>İZLE ▶</small></div>';
-  }).join('') || '<p style="grid-column:1/3;text-align:center;color:#999">Bulunamadı</p>';
-}
-function oynat(id,isim){
-  let video=document.getElementById('video');
-  let link='';
-  if(aktifSekme==='canli') link="https://corsproxy.io/?url=" + encodeURIComponent(SERVER+"/live/"+USER+"/"+PASS+"/"+id+".m3u8");
-  if(aktifSekme==='film') link="https://corsproxy.io/?url=" + encodeURIComponent(SERVER+"/movie/"+USER+"/"+PASS+"/"+id+".mp4");
-  if(aktifSekme==='dizi') link="https://corsproxy.io/?url=" + encodeURIComponent(SERVER+"/series/"+USER+"/"+PASS+"/"+id+".mp4");
-  document.getElementById('oynatici').style.display='block';
-  document.getElementById('kanalAdi').innerText='Şimdi oynatılıyor: '+isim;
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(window.Hls && Hls.isSupported() && link.includes('.m3u8')){ let hls=new Hls(); hls.loadSource(link); hls.attachMedia(video); hls.on(Hls.Events.MANIFEST_PARSED,()=>video.play()); }
-  else{ video.src=link; video.play(); }
-}
+$("recentBtn").onclick=()=>{
+ showingRecent=!showingRecent;
+ $("recentBtn").classList.toggle("active",showingRecent);
+ $("listTitle").textContent=showingRecent?"SON İZLENENLER":
+  activeTab==="live"?"CANLI YAYINLAR":
+  activeTab==="movie"?"FİLMLER":"DİZİLER";
+ render();
+};
+
+$("stop").onclick=()=>{
+ stopPlayer();
+ playerStatus("Yayın durduruldu.");
+};
+
+$("playPause").onclick=()=>{
+ const v=$("video");
+ if(v.paused)v.play().catch(()=>{});
+ else v.pause();
+};
+
+$("fullscreen").onclick=()=>{
+ const v=$("video");
+ if(v.requestFullscreen)v.requestDNS?v.requestFullscreen():v.requestFullscreen();
+ else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();
+};
+
+$("next").onclick=()=>{
+ if(currentIndex<visibleData.length-1){
+  playItem(visibleData[currentIndex+1],currentIndex+1);
+ }
+};
+
+$("previous").onclick=()=>{
+ if(currentIndex>0){
+  playItem(visibleData[currentIndex-1],currentIndex-1);
+ }
+};
+
+window.addEventListener("DOMContentLoaded",()=>{
+ const s=localStorage.getItem("benimtv_server");
+ const u=localStorage.getItem("benimtv_user");
+ const p=localStorage.getItem("benimtv_pass");
+
+ if(s&&u&&p){
+  $("server").value=s;
+  $("username").value=u;
+  $("password").value=p;
+  $("remember").checked=true;
+ }
+});
 </script>
 </body>
 </html>
