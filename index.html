@@ -3,81 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IPTV Giriş</title>
+<title>Benim TV Panelim</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-body {
-  background: #0a0a0f;
-  color: white;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background-image: radial-gradient(circle at 50% 0%, #1e1e2e 0%, #0a0a0f 60%);
-}
-.kutu {
-  width: 100%;
-  max-width: 380px;
-  background: #15151f;
-  border: 1px solid #2a2a3a;
-  border-radius: 20px;
-  padding: 28px 22px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  text-align: center;
-}
-.logo {
-  width: 70px; height: 70px;
-  background: #f5c518;
-  border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 34px; margin: 0 auto 14px;
-}
-h1 { font-size: 22px; margin-bottom: 4px; }
-p { color: #9a9aab; font-size: 13px; margin-bottom: 22px; }
-label { display: block; text-align: left; font-size: 12px; color: #aaa; margin: 12px 0 6px; }
-input {
-  width: 100%; padding: 13px 14px;
-  background: #0f0f16; border: 1px solid #2a2a3a;
-  border-radius: 12px; color: white; font-size: 15px; outline: none;
-}
-input:focus { border-color: #f5c518; }
-button {
-  width: 100%; margin-top: 22px; padding: 14px;
-  background: #f5c518; border: none; border-radius: 12px;
-  font-size: 16px; font-weight: bold; cursor: pointer;
-}
-button:active { opacity: 0.85; }
-.alt { margin-top: 14px; font-size: 11px; color: #666; }
+*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
+body{background:#0a0a0f;color:#fff;min-height:100vh}
+.ust{background:#15151f;padding:14px 14px 10px;position:sticky;top:0;z-index:10;border-bottom:1px solid #2a2a3a}
+.logo{font-weight:bold;font-size:19px} .logo span{color:#f5c518}
+.ara{width:100%;margin-top:12px;padding:11px 12px;background:#0f0f16;border:1px solid #2a2a3a;border-radius:10px;color:#fff;outline:none}
+.sekmeler{display:flex;gap:8px;margin-top:12px}
+.sekme{flex:1;padding:10px;border-radius:10px;border:1px solid #2a2a3a;background:#0f0f16;color:#aaa;text-align:center;font-size:13px;font-weight:bold;cursor:pointer}
+.sekme.aktif{background:#f5c518;color:#000;border-color:#f5c518}
+#oynatici{display:none;background:#000;padding:10px}
+video{width:100%;border-radius:12px;background:#000;max-height:280px}
+#kanalAdi{font-size:14px;margin-top:8px;font-weight:bold}
+.liste{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kart{background:#15151f;border:1px solid #2a2a3a;border-radius:14px;padding:12px;cursor:pointer}
+.kart img{width:100%;height:70px;object-fit:contain;background:#0f0f16;border-radius:10px}
+.kart b{font-size:12px;display:block;margin-top:8px;line-height:1.3;min-height:30px}
+.kart small{color:#f5c518;font-size:11px}
+.giris{max-width:380px;margin:30px auto;padding:24px;background:#15151f;border:1px solid #2a2a3a;border-radius:20px}
+.giris h1{text-align:center;font-size:22px} .giris p{text-align:center;color:#999;font-size:13px;margin:6px 0 18px}
+label{font-size:12px;color:#aaa;display:block;margin:12px 0 6px}
+input{width:100%;padding:12px;background:#0f0f16;border:1px solid #2a2a3a;border-radius:10px;color:#fff}
+button{width:100%;margin-top:18px;padding:13px;background:#f5c518;border:none;border-radius:10px;font-weight:bold;font-size:15px}
+#durum{text-align:center;font-size:12px;color:#ff9a9a;margin-top:10px}
 </style>
 </head>
 <body>
-<div class="kutu">
-  <div class="logo">📺</div>
-  <h1>IPTV Panel</h1>
-  <p>Yayınları izlemek için giriş yap</p>
 
-  <label>Sunucu Adresi</label>
-  <input id="server" type="text" placeholder="http://ornek.com:8080" value="http://2233030.cc:8080">
-
+<div id="loginSayfa" class="giris">
+  <h1>📺 Benim TV</h1>
+  <p>Yasal aboneliğin ile giriş yap</p>
+  <label>Sunucu URL (https ile başlayan)</label>
+  <input id="server" placeholder="https://ornek.com:8080">
   <label>Kullanıcı Adı</label>
-  <input id="user" type="text" placeholder="Kullanıcı adın">
-
+  <input id="user" placeholder="Kullanıcı adın">
   <label>Şifre</label>
   <input id="pass" type="password" placeholder="Şifren">
+  <button onclick="girisYap()">GİRİŞ YAP</button>
+  <div id="durum"></div>
+</div>
 
-  <button onclick="giris()">GİRİŞ YAP</button>
-  <div class="alt">Sadece yasal aboneliğin ile kullan</div>
+<div id="panel" style="display:none">
+  <div class="ust">
+    <div class="logo">📺 BENİM <span>TV</span></div>
+    <input class="ara" id="arama" placeholder="Kanal / film ara..." oninput="listele()">
+    <div class="sekmeler">
+      <div class="sekme aktif" id="sekme-canli" onclick="sekmeDegistir('canli')">CANLI TV</div>
+      <div class="sekme" id="sekme-film" onclick="sekmeDegistir('film')">FİLM</div>
+      <div class="sekme" id="sekme-dizi" onclick="sekmeDegistir('dizi')">DİZİ</div>
+    </div>
+  </div>
+  <div id="oynatici">
+    <video id="video" controls playsinline></video>
+    <div id="kanalAdi"></div>
+  </div>
+  <div class="liste" id="liste"></div>
 </div>
 
 <script>
-function giris(){
-  let s = document.getElementById('server').value;
-  let u = document.getElementById('user').value;
-  let p = document.getElementById('pass').value;
-  if(!u || !p){ alert('Lütfen kullanıcı adı ve şifreni yaz'); return; }
-  alert('Giriş deneniyor: ' + u);
-  // Burada sunucuya bağlanma kodu olacak
+let SERVER="", USER="", PASS="", aktifSekme='canli', veriler=[];
+async function girisYap(){
+  SERVER=document.getElementById('server').value.trim().replace(/\/$/,'');
+  USER=document.getElementById('user').value.trim();
+  PASS=document.getElementById('pass').value.trim();
+  if(!SERVER||!USER||!PASS){ document.getElementById('durum').innerText='Lütfen hepsini doldur'; return; }
+  document.getElementById('durum').innerText='Bağlanılıyor...';
+  try{
+    let r=await fetch(`${SERVER}/player_api.php?username=${USER}&password=${PASS}&action=get_live_streams`);
+    if(!r.ok) throw new Error('Sunucu cevap vermedi');
+    veriler=await r.json();
+    if(!Array.isArray(veriler)) throw new Error('Giriş başarısız, bilgileri kontrol et');
+    document.getElementById('loginSayfa').style.display='none';
+    document.getElementById('panel').style.display='block';
+    listele();
+  }catch(e){
+    document.getElementById('durum').innerText='Bağlanamadı: '+e.message+' - Satıcından https adresi iste';
+  }
+}
+function sekmeDegistir(t){
+  aktifSekme=t;
+  document.querySelectorAll('.sekme').forEach(e=>e.classList.remove('aktif'));
+  document.getElementById('sekme-'+t).classList.add('aktif');
+  listele();
+}
+async function listele(){
+  let q=document.getElementById('arama').value.toLowerCase();
+  let url='';
+  if(aktifSekme==='canli') url=`${SERVER}/player_api.php?username=${USER}&password=${PASS}&action=get_live_streams`;
+  if(aktifSekme==='film') url=`${SERVER}/player_api.php?username=${USER}&password=${PASS}&action=get_vod_streams`;
+  if(aktifSekme==='dizi') url=`${SERVER}/player_api.php?username=${USER}&password=${PASS}&action=get_series`;
+  try{
+    let r=await fetch(url); let d=await r.json(); veriler=d;
+  }catch(e){}
+  let filtreli=veriler.filter(x=>(x.name||'').toLowerCase().includes(q)).slice(0,60);
+  document.getElementById('liste').innerHTML=filtreli.map((x,i)=>{
+    let isim=(x.name||'İsimsiz').replace(/'/g,'');
+    let resim=x.stream_icon||x.cover||'';
+    return `<div class="kart" onclick="oynat(${x.stream_id},'${isim}')">
+      <img src="${resim}" onerror="this.style.display='none'">
+      <b>${isim}</b><small>İZLE ▶</small></div>`;
+  }).join('') || '<p style="grid-column:1/3;text-align:center;color:#999">Bulunamadı</p>';
+}
+function oynat(id,isim){
+  let video=document.getElementById('video');
+  let link='';
+  if(aktifSekme==='canli') link=`${SERVER}/live/${USER}/${PASS}/${id}.m3u8`;
+  if(aktifSekme==='film') link=`${SERVER}/movie/${USER}/${PASS}/${id}.mp4`;
+  if(aktifSekme==='dizi') link=`${SERVER}/series/${USER}/${PASS}/${id}.mp4`;
+  document.getElementById('oynatici').style.display='block';
+  document.getElementById('kanalAdi').innerText='Şimdi oynatılıyor: '+isim;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(Hls.isSupported() && link.includes('.m3u8')){ let hls=new Hls(); hls.loadSource(link); hls.attachMedia(video); hls.on(Hls.Events.MANIFEST_PARSED,()=>video.play()); }
+  else{ video.src=link; video.play(); }
 }
 </script>
 </body>
