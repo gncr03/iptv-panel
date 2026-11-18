@@ -3,113 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IPTV Panelim</title>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<title>IPTV Giriş</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
-body{background:#0f172a;color:#fff;padding:14px}
-h1{font-size:20px;margin-bottom:10px}
-.login{background:#1e293b;border-radius:16px;padding:16px;margin-bottom:14px}
-.login input{width:100%;padding:12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;margin-bottom:8px}
-.login button{width:100%;padding:12px;border-radius:10px;border:none;background:#eab308;font-weight:800;font-size:15px}
-#playerWrap{display:none;background:#000;border-radius:16px;overflow:hidden;margin-bottom:12px}
-video{width:100%;aspect-ratio:16/9;background:#000}
-#nowPlaying{padding:10px;font-size:14px;background:#1e293b}
-.tabs{display:flex;gap:8px;margin-bottom:10px}
-.tab{flex:1;padding:10px;border-radius:99px;border:1px solid #334155;background:#1e293b;color:#fff;font-weight:700}
-.tab.active{background:#fff;color:#000}
-#search{width:100%;padding:11px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;margin-bottom:10px}
-#cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
-.cat{white-space:nowrap;padding:7px 12px;border-radius:99px;background:#1e293b;border:1px solid #334155;font-size:12px}
-.cat.active{background:#eab308;color:#000;font-weight:700}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:#1e293b;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
-.card img{width:100%;height:70px;object-fit:contain;background:#0f172a;border-radius:8px;margin-bottom:6px}
-.card b{font-size:12px;line-height:1.3;display:block;overflow:hidden;height:32px}
-#status{text-align:center;color:#94a3b8;font-size:13px;padding:20px}
-.favBtn{float:right;background:none;border:none;font-size:18px}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.logout{background:#334155;color:#fff;border:none;padding:8px 12px;border-radius:99px}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+body {
+  background: #0a0a0f;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-image: radial-gradient(circle at 50% 0%, #1e1e2e 0%, #0a0a0f 60%);
+}
+.kutu {
+  width: 100%;
+  max-width: 380px;
+  background: #15151f;
+  border: 1px solid #2a2a3a;
+  border-radius: 20px;
+  padding: 28px 22px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  text-align: center;
+}
+.logo {
+  width: 70px; height: 70px;
+  background: #f5c518;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; margin: 0 auto 14px;
+}
+h1 { font-size: 22px; margin-bottom: 4px; }
+p { color: #9a9aab; font-size: 13px; margin-bottom: 22px; }
+label { display: block; text-align: left; font-size: 12px; color: #aaa; margin: 12px 0 6px; }
+input {
+  width: 100%; padding: 13px 14px;
+  background: #0f0f16; border: 1px solid #2a2a3a;
+  border-radius: 12px; color: white; font-size: 15px; outline: none;
+}
+input:focus { border-color: #f5c518; }
+button {
+  width: 100%; margin-top: 22px; padding: 14px;
+  background: #f5c518; border: none; border-radius: 12px;
+  font-size: 16px; font-weight: bold; cursor: pointer;
+}
+button:active { opacity: 0.85; }
+.alt { margin-top: 14px; font-size: 11px; color: #666; }
 </style>
 </head>
 <body>
-<h1>📺 IPTV Panelim</h1>
-<div id="loginBox" class="login">
-  <input id="server" placeholder="Sunucu: http://ornek.com:8080">
-  <input id="user" placeholder="Kullanıcı Adı">
-  <input id="pass" type="password" placeholder="Şifre">
-  <label style="font-size:12px;color:#94a3b8"><input type="checkbox" id="remember" checked style="width:auto"> Beni hatırla</label><br><br>
-  <button onclick="giris()">🚀 Giriş Yap</button>
-  <div id="loginMsg" style="font-size:12px;color:#facc15;margin-top:8px;text-align:center"></div>
+<div class="kutu">
+  <div class="logo">📺</div>
+  <h1>IPTV Panel</h1>
+  <p>Yayınları izlemek için giriş yap</p>
+
+  <label>Sunucu Adresi</label>
+  <input id="server" type="text" placeholder="http://ornek.com:8080" value="http://2233030.cc:8080">
+
+  <label>Kullanıcı Adı</label>
+  <input id="user" type="text" placeholder="Kullanıcı adın">
+
+  <label>Şifre</label>
+  <input id="pass" type="password" placeholder="Şifren">
+
+  <button onclick="giris()">GİRİŞ YAP</button>
+  <div class="alt">Sadece yasal aboneliğin ile kullan</div>
 </div>
-<div id="main" style="display:none">
-  <div class="topbar"><span id="userInfo" style="font-size:13px"></span><button class="logout" onclick="cikis()">Çıkış</button></div>
-  <div id="playerWrap"><video id="video" controls playsinline></video><div id="nowPlaying">Bir kanal seç...</div></div>
-  <div class="tabs">
-    <button class="tab active" id="tab-live" onclick="setTab('live')">📺 Canlı TV</button>
-    <button class="tab" id="tab-vod" onclick="setTab('vod')">🎬 Film</button>
-    <button class="tab" id="tab-series" onclick="setTab('series')">🎞️ Dizi</button>
-    <button class="tab" id="tab-fav" onclick="setTab('fav')">⭐ Favori</button>
-  </div>
-  <input id="search" placeholder="🔍 Kanal / Film ara..." oninput="render()">
-  <div id="cats"></div>
-  <div id="status"></div>
-  <div id="grid" class="grid"></div>
-</div>
+
 <script>
-let SERVER='', USER='', PASS='';
-let LIVE=[], VOD=[], SERIES=[], CATS={live:[],vod:[],series:[]};
-let TAB='live', CUR_CAT='all';
-let FAV=JSON.parse(localStorage.getItem('iptv_fav')||'[]');
-let hls=null;
-function api(action, extra=''){ return fetch(`${SERVER}/player_api.php?username=${encodeURIComponent(USER)}&password=${encodeURIComponent(PASS)}&action=${action}${extra}`).then(r=>r.json()); }
-async function giris(){
-  SERVER=document.getElementById('server').value.trim().replace(/\/$/,'');
-  USER=document.getElementById('user').value.trim();
-  PASS=document.getElementById('pass').value.trim();
-  if(!SERVER || !USER || !PASS){alert('Hepsini doldur canım');return;}
-  if(!SERVER.startsWith('http')) SERVER='http://'+SERVER;
-  document.getElementById('loginMsg').textContent='Bağlanılıyor...';
-  try{
-    const info = await api('get_account_info');
-    if(!info || !info.user_info || info.user_info.status!=='Active'){document.getElementById('loginMsg').textContent='Giriş başarısız: Bilgileri kontrol et.';return;}
-    if(document.getElementById('remember').checked){localStorage.setItem('iptv_server',SERVER);localStorage.setItem('iptv_user',USER);localStorage.setItem('iptv_pass',PASS);}
-    document.getElementById('loginBox').style.display='none';document.getElementById('main').style.display='block';
-    document.getElementById('userInfo').textContent='👤 '+USER+' | Bitiş: '+(info.user_info.exp_date ? new Date(info.user_info.exp_date*1000).toLocaleDateString('tr-TR') : '-');
-    await yukle();
-  }catch(e){document.getElementById('loginMsg').textContent='Sunucuya ulaşılamadı. Sunucu adresini kontrol et.';}
+function giris(){
+  let s = document.getElementById('server').value;
+  let u = document.getElementById('user').value;
+  let p = document.getElementById('pass').value;
+  if(!u || !p){ alert('Lütfen kullanıcı adı ve şifreni yaz'); return; }
+  alert('Giriş deneniyor: ' + u);
+  // Burada sunucuya bağlanma kodu olacak
 }
-function cikis(){localStorage.removeItem('iptv_server');localStorage.removeItem('iptv_user');localStorage.removeItem('iptv_pass');location.reload();}
-async function yukle(){
-  document.getElementById('status').textContent='Kanallar yükleniyor...';
-  try{
-    const [lc, vc, sc, ls, vs, ss] = await Promise.all([api('get_live_categories'), api('get_vod_categories'), api('get_series_categories'), api('get_live_streams'), api('get_vod_streams'), api('get_series')]);
-    CATS.live=lc||[]; CATS.vod=vc||[]; CATS.series=sc||[]; LIVE=ls||[]; VOD=vs||[]; SERIES=ss||[];
-    document.getElementById('status').textContent=`${LIVE.length} kanal, ${VOD.length} film, ${SERIES.length} dizi bulundu ✅`; render();
-  }catch(e){document.getElementById('status').textContent='Liste yüklenemedi: '+e.message;}
-}
-function setTab(t){TAB=t;CUR_CAT='all';document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');render();}
-function getList(){ if(TAB==='live') return LIVE; if(TAB==='vod') return VOD; if(TAB==='series') return SERIES; if(TAB==='fav'){let all=[...LIVE,...VOD,...SERIES]; return all.filter(x=>FAV.includes(String(x.stream_id||x.series_id)));} return []; }
-function toggleFav(id, ev){ev.stopPropagation(); id=String(id); if(FAV.includes(id)) FAV=FAV.filter(x=>x!==id); else FAV.push(id); localStorage.setItem('iptv_fav',JSON.stringify(FAV)); render();}
-function render(){
-  const q=(document.getElementById('search').value||'').toLowerCase();
-  let list=getList(); let cats = TAB==='fav'?[]:(CATS[TAB]||[]);
-  let catHtml=`<div class="cat ${CUR_CAT==='all'?'active':''}" onclick="CUR_CAT='all';render()">Tümü</div>` + cats.map(c=>`<div class="cat ${CUR_CAT===c.category_id?'active':''}" onclick="CUR_CAT='${c.category_id}';render()">${c.category_name}</div>`).join('');
-  document.getElementById('cats').innerHTML=catHtml;
-  if(CUR_CAT!=='all') list=list.filter(x=>String(x.category_id)===String(CUR_CAT));
-  if(q) list=list.filter(x=>(x.name||'').toLowerCase().includes(q));
-  const grid=document.getElementById('grid');
-  grid.innerHTML=list.slice(0,300).map(item=>{const id=item.stream_id||item.series_id; const isFav=FAV.includes(String(id)); const img=item.stream_icon||item.cover||''; const name=(item.name||'').replace(/'/g,""); return `<div class="card" onclick="oynat('${TAB}',${id},'${name}')"><button class="favBtn" onclick="toggleFav(${id},event)">${isFav?'⭐':'☆'}</button>${img?`<img src="${img}" onerror="this.style.display='none'">`:`<div style="height:70px;display:flex;align-items:center;justify-content:center;font-size:30px">📺</div>`}<b>${item.name||''}</b></div>`;}).join('');
-  if(!list.length) grid.innerHTML='<div style="grid-column:1/3;text-align:center;color:#94a3b8;padding:20px">Bulunamadı</div>';
-}
-function oynat(tab,id,name){
-  document.getElementById('playerWrap').style.display='block'; document.getElementById('nowPlaying').textContent='▶️ Oynatılıyor: '+name;
-  let url=''; if(tab==='live') url=`${SERVER}/live/${USER}/${PASS}/${id}.m3u8`; else if(tab==='vod') url=`${SERVER}/movie/${USER}/${PASS}/${id}.mp4`; else if(tab==='series') url=`${SERVER}/series/${USER}/${PASS}/${id}.mp4`; else url=`${SERVER}/live/${USER}/${PASS}/${id}.m3u8`;
-  const video=document.getElementById('video'); if(hls){hls.destroy();hls=null;}
-  if(url.endsWith('.m3u8') && Hls.isSupported()){hls=new Hls(); hls.loadSource(url); hls.attachMedia(video); hls.on(Hls.Events.MANIFEST_PARSED,()=>video.play().catch(()=>{}));} else {video.src=url; video.play().catch(()=>{});}
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-window.onload=()=>{const s=localStorage.getItem('iptv_server'); if(s){document.getElementById('server').value=s;document.getElementById('user').value=localStorage.getItem('iptv_user')||'';document.getElementById('pass').value=localStorage.getItem('iptv_pass')||'';}};
 </script>
 </body>
 </html>
